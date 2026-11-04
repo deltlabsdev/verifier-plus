@@ -1,7 +1,6 @@
 'use client'
 import { NextPage } from "next";
 import styles from '@/css/infopages.module.css'
-import { BottomBar } from "@/components/BottomBar/BottomBar";
 import { TopBar } from "@/components/TopBar/TopBar";
 import { useEffect, useState } from "react";
 
@@ -32,7 +31,6 @@ const Terms: NextPage = () => {
             </ol>
             <p >Effective Date September 14, 2022</p>
       </div>
-      <BottomBar isDark={isDark}/>
     </main>
   );
 }

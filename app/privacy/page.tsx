@@ -1,7 +1,6 @@
 'use client'
 import { NextPage } from "next";
 import styles from '@/css/infopages.module.css'
-import { BottomBar } from "@/components/BottomBar/BottomBar";
 import { TopBar } from "@/components/TopBar/TopBar";
 import { useEffect, useState } from "react";
 
@@ -42,7 +41,6 @@ const Privacy: NextPage = () => {
           <p>The controller for your personal information is the VerifierPlus project at MIT. We can be contacted at verifierplus-support -at- mit -dot- edu.</p>
         </div>
       </div>
-      <BottomBar isDark={isDark}/>
     </main>
   );
 }

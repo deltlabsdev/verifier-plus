@@ -1,7 +1,6 @@
 'use client'
 import { NextPage } from "next";
 import styles from '@/css/infopages.module.css'
-import { BottomBar } from "@/components/BottomBar/BottomBar";
 import { TopBar } from "@/components/TopBar/TopBar";
 import { useEffect, useState } from "react";
 
@@ -47,7 +46,6 @@ const Faq: NextPage = () => {
         <p>To learn more about the DCC please visit us at <a href='https://digitalcredentials.mit.edu'>digitalcredentials.mit.edu</a>.</p>
 
       </div>
-      <BottomBar isDark={isDark}/>
     </main>
   );
 }

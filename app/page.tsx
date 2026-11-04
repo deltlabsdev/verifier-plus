@@ -12,7 +12,6 @@ import { VerifiableCredential } from '@/types/credential'
 import { useVerification } from '@/lib/useVerification'
 import { credentialsFromQrText } from '@/lib/decode';
 import { TopBar } from '@/components/TopBar/TopBar'
-import { BottomBar } from '@/components/BottomBar/BottomBar'
 import { extractCredentialsFrom, VerifiableObject } from '@/lib/verifiableObject'
 import { QRCodeSVG } from 'qrcode.react';
 import { v4 as uuidv4 } from 'uuid';
@@ -364,7 +363,6 @@ export default function Home() {
           </VerificationContext.Provider>
         </div>
 
-        <BottomBar isDark={isDark} />
       </main>
     );
   }
@@ -426,9 +424,11 @@ export default function Home() {
             VerifierPlus allows users to verify any <Link href='faq#supported'>supported</Link> digital academic
             credential.
             This site is hosted by
-            the <a href='https://digitalcredentials.mit.edu/'>Digital Credentials Consortium</a>
+            the <a href='https://deltlabs.net'>DeLT Labs</a>          
+            using the code from <a href='https://digitalcredentials.mit.edu/'>Digital Credentials Consortium</a>
             , a network of leading international universities designing an open
             infrastructure for digital academic credentials. <Link href='faq#trust'>Why trust us?</Link>
+
           </p>
         </div>
 
@@ -540,7 +540,6 @@ export default function Home() {
 
         <ScanModal isOpen={isOpen} setIsOpen={setIsOpen} onScan={onScan} setErrorMessage={setScanError} />
       </div>
-      <BottomBar isDark={isDark} />
     </main>
   )
 }
