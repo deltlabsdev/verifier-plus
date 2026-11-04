@@ -1,68 +1,52 @@
-version: "3.7"
-
+Docker compose · YAML
+# VerifierPlus for Coolify
+# - Coolify's proxy handles domains and HTTPS, so nginx-proxy / acme-companion are gone.
+# - In Coolify: set the verifier-plus domain (port 3000) and the PUBLIC_URL variable to the same https:// URL.
+# - MongoDB runs alongside; set MONGODB_URI yourself instead if you use Atlas.
+ 
 services:
   verifier-plus:
-    container_name: verifier-plus
-    build: .
+    build:
+      context: .
+      args:
+        # Inlined into the browser bundle at build time: redeploy after changing it
+        NEXT_PUBLIC_EXCHANGE_SERVER_URL: ${PUBLIC_URL:?Set PUBLIC_URL, e.g. https://verifier.deltlabs.net}
+    restart: unless-stopped
     environment:
-      - HEALTH_CHECK_SMTP_HOST=add your email host, like smtp.sendgrid.net
-      - HEALTH_CHECK_SMTP_USER=
-      - HEALTH_CHECK_SMTP_PASS=
-      - HEALTH_CHECK_EMAIL_FROM=Digital Credentials Consortium Demo Issuer <DCC-support@mit.edu>
-      - HEALTH_CHECK_EMAIL_RECIPIENT=the email addresss of whoever should receive unhealthy notications
-      - HEALTH_CHECK_EMAIL_SUBJECT="DCC Dashboard Issuer Coordinator Microservice Healthcheck"
-      - HEALTH_CHECK_WEB_HOOK=a webhook like those of Slack
-      - HEALTH_CHECK_SERVICE_URL=http://testing.dcconsortium.org/api/healthz - the healthz endpoint
-      - HEALTH_CHECK_SERVICE_NAME=VERIFIER-PLUS
-      - DB_USER=your mongo user
-      - DB_PASS=and mongo password
-      - DB_HOST=and mongo host
-      - VIRTUAL_HOST=testing.dcconsortium.org - replace with your server host
-      - VIRTUAL_PORT=3000 - and port
-      - LETSENCRYPT_HOST=testing.dcconsortium.org - usually the same as VIRTUAL_HOST
+      - SERVICE_FQDN_VERIFIERPLUS_3000
+      - HOSTNAME=0.0.0.0
+      - PORT=3000
+      # Bundled MongoDB below. For Atlas, replace with your mongodb+srv:// string.
+      - MONGODB_URI=mongodb://${SERVICE_USER_MONGO}:${SERVICE_PASSWORD_MONGO}@mongo:27017/?authSource=admin
+      - DB_NAME=${DB_NAME:-verifier-plus}
+      - DB_COLLECTION=${DB_COLLECTION:-credentials}
+    depends_on:
+      mongo:
+        condition: service_healthy
     healthcheck:
-      test: ["CMD", "node", "healthcheck.mjs"]
-      interval: 30m
+      # Cheap liveness check. /api/healthz writes a test credential to Mongo on every call,
+      # which is too heavy to run every 30 seconds.
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 10s
       retries: 3
       start_period: 30s
-      timeout: 80s
-    ports:
-      - "3000:3000"
-    labels:
-      autoheal: true
-  autoheal:
-    image: willfarrell/autoheal:latest
-    restart: always
+ 
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
     environment:
-      - AUTOHEAL_INTERVAL=60
-      - AUTOHEAL_START_PERIOD=30
-      - WEBHOOK_URL=an optional webhook to report restarts
+      - MONGO_INITDB_ROOT_USERNAME=${SERVICE_USER_MONGO}
+      - MONGO_INITDB_ROOT_PASSWORD=${SERVICE_PASSWORD_MONGO}
     volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /var/run/docker.sock:/var/run/docker.sock
-  nginx-proxy:
-    container_name: nginx-proxy
-    image: nginxproxy/nginx-proxy
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-      - ./certs:/etc/nginx/certs
-      - ./vhost:/etc/nginx/vhost.d
-      - ./html:/usr/share/nginx/html
-  nginx-proxy-acme:
-    container_name: nginx-proxy-acme
-    image: nginxproxy/acme-companion
-    environment:
-      - DEFAULT_EMAIL=chartraj@mit.edu - replace with the admin/maintainer
-      - NGINX_PROXY_CONTAINER=nginx-proxy
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./acme:/etc/acme.sh
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-      - ./certs:/etc/nginx/certs
-      - ./vhost:/etc/nginx/vhost.d
-      - ./html:/usr/share/nginx/html
-    depends_on:
-      - "nginx-proxy"
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+ 
+volumes:
+  mongo-data:
+ 
