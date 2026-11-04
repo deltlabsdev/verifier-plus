@@ -1,4 +1,3 @@
-Docker compose · YAML
 # VerifierPlus for Coolify
 # - Coolify's proxy handles domains and HTTPS, so nginx-proxy / acme-companion are gone.
 # - In Coolify: set the verifier-plus domain (port 3000) and the PUBLIC_URL variable to the same https:// URL.
@@ -10,7 +9,7 @@ services:
       context: .
       args:
         # Inlined into the browser bundle at build time: redeploy after changing it
-        NEXT_PUBLIC_EXCHANGE_SERVER_URL: ${PUBLIC_URL:?Set PUBLIC_URL, e.g. https://verifier.deltlabs.net}
+        NEXT_PUBLIC_EXCHANGE_SERVER_URL: ${PUBLIC_URL}
     restart: unless-stopped
     environment:
       - SERVICE_FQDN_VERIFIERPLUS_3000
