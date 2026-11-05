@@ -10,7 +10,8 @@ export function isPng(bytes: Uint8Array): boolean {
 }
 
 async function inflate(data: Uint8Array): Promise<Uint8Array> {
-  const stream = new Blob([data]).stream().pipeThrough(new DecompressionStream('deflate'));
+  // Copy into a plain ArrayBuffer-backed array; Blob rejects ArrayBufferLike views
+  const stream = new Blob([new Uint8Array(data)]).stream().pipeThrough(new DecompressionStream('deflate'));
   return new Uint8Array(await new Response(stream).arrayBuffer());
 }
 
