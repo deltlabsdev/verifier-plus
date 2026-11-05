@@ -11,6 +11,7 @@ import { VerificationContext } from '@/lib/verificationContext'
 import { VerifiableCredential } from '@/types/credential'
 import { useVerification } from '@/lib/useVerification'
 import { credentialsFromQrText } from '@/lib/decode';
+import { extractBadgeFromPng, isPng } from '@/lib/bakedPng';
 import { TopBar } from '@/components/TopBar/TopBar'
 import { extractCredentialsFrom, VerifiableObject } from '@/lib/verifiableObject'
 import { QRCodeSVG } from 'qrcode.react';
@@ -127,57 +128,24 @@ export default function Home() {
 
   useEffect(() => {
     if (file !== null) {
-      const reader = new FileReader();
-
-      reader.onload = (e) => {
-        let text = e.target?.result as string ?? '';
-        if (file.type == 'image/png') {
-          // Search for keyword and extract the object following it
-          const keyword = 'openbadgecredential';
-          const keywordIndex = text.indexOf(keyword);
-
-          // Check if the keyword is found
-          if (keywordIndex !== -1) {
-            // Extract the portion of the string after the keyword
-            const startIndex = keywordIndex + keyword.length;
-
-            // Find start of the object
-            const objectStart = text.indexOf('{', startIndex);
-
-            if (objectStart !== -1) {
-              // Find matching closing brace
-              let braceCount = 0;
-              let objectEnd = objectStart;
-
-              while (objectEnd < text.length) {
-                if (text[objectEnd] === '{') {
-                  braceCount++;
-                } else if (text[objectEnd] === '}') {
-                  braceCount--;
-                }
-
-                // When brace count goes back to zero = found the end of object
-                if (braceCount === 0) {
-                  break;
-                }
-
-                objectEnd++;
-              }
-
-              // Slice string to capture the entire object (including braces)
-              const objectString = text.slice(objectStart, objectEnd + 1);
-
-              // Parse object
-              try {
-                const parsedObject = JSON.parse(objectString);
-                text = JSON.stringify(parsedObject, null, 2);
-              } catch (error) {
-                console.error('Failed to parse JSON:', error);
-              }
+      (async () => {
+        let text = '';
+        try {
+          const bytes = new Uint8Array(await file.arrayBuffer());
+          if (isPng(bytes)) {
+            const embedded = await extractBadgeFromPng(bytes);
+            if (embedded && /^https?:\/\//i.test(embedded)) {
+              // OB 2.0 hosted badge: the PNG holds the assertion URL
+              text = await getJSONFromURL(embedded);
+            } else {
+              text = embedded ?? '';
+              if (!embedded) console.log('No embedded badge found in PNG');
             }
           } else {
-            console.log('Keyword not found');
+            text = new TextDecoder().decode(bytes);
           }
+        } catch (error) {
+          console.error('Failed to read file:', error);
         }
 
         const result = verifyCredential(text);
@@ -187,8 +155,7 @@ export default function Home() {
         } else {
           setFileError(false);
         }
-      };
-      reader.readAsText(file, 'UTF-8');
+      })();
     }
   }, [file]);
 

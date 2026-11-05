@@ -63,7 +63,7 @@ export const CredentialCard = ({ credential, wasMulti = false }: CredentialCardP
             </div>
           </div>
           <div className={styles.achivementInfo}>
-            {displayValues.achievementImage ? <img className={styles.achievementImage} src={displayValues.achievementImage} alt="achievement image" data-testid={TestId.AchievementImage}/> : null}
+            {displayValues.achievementImage ? <img key={displayValues.achievementImage} className={styles.achievementImage} src={displayValues.achievementImage} alt="achievement image" data-testid={TestId.AchievementImage} onError={(e) => { e.currentTarget.style.display = 'none' }}/> : null}
             <div>
               <h1 id='title' className={styles.credentialName} data-testid={TestId.CredentialName}>{displayValues.credentialName}</h1>
               {displayValues.achievementType ? <p className={styles.achievementType} data-testid={TestId.AchievementType}>Achievement Type: {displayValues.achievementType}</p> : null}

@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server';
+import { extractBadgeFromPng, isPng } from '@/lib/bakedPng';
 
 const headers = {
   'Access-Control-Allow-Origin': '*',
@@ -58,7 +59,34 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    const data = await response.json();
+    const bytes = new Uint8Array(await response.arrayBuffer());
+    let data: unknown;
+
+    if (isPng(bytes)) {
+      const embedded = await extractBadgeFromPng(bytes);
+      if (!embedded) {
+        return Response.json({ error: 'PNG does not contain an embedded badge' }, {
+          status: 422,
+          headers
+        })
+      }
+      if (/^https?:\/\//i.test(embedded)) {
+        // OB 2.0 hosted badges bake in the assertion URL rather than the JSON
+        const hosted = await fetch(embedded);
+        if (!hosted.ok) {
+          return Response.json({ error: 'Failed to fetch URL embedded in PNG' }, {
+            status: hosted.status,
+            headers
+          })
+        }
+        data = await hosted.json();
+      } else {
+        data = JSON.parse(embedded);
+      }
+    } else {
+      data = JSON.parse(new TextDecoder().decode(bytes));
+    }
+
     return Response.json(data, {
       status: 200,
       headers
