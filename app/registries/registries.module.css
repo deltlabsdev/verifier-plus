@@ -1,0 +1,109 @@
+.intro {
+  color: var(--light-text);
+}
+
+.lookup {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 16px 0 8px;
+}
+
+.lookup input {
+  flex: 1 1 320px;
+  min-width: 0;
+  padding: 8px 10px;
+  font-family: monospace;
+  font-size: 14px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--contrast-text);
+  color: var(--text);
+}
+
+.lookupResult {
+  padding: 10px 12px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  border: 1px solid var(--border);
+}
+
+.found {
+  border-color: var(--success);
+  color: var(--success);
+}
+
+.notFound {
+  border-color: var(--error);
+  color: var(--error);
+}
+
+.registry {
+  border-top: 1px solid var(--border);
+  padding: 16px 0 8px;
+}
+
+.registryHeader {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.registryHeader h3 {
+  margin: 0;
+  font-size: 17px;
+  color: var(--text);
+}
+
+.badge {
+  font-size: 12px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--light-text);
+}
+
+.ours {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.source {
+  font-size: 13px;
+  word-break: break-all;
+  margin: 4px 0;
+}
+
+.muted {
+  color: var(--light-text);
+  font-size: 14px;
+}
+
+.error {
+  color: var(--error);
+  font-size: 14px;
+}
+
+.entries {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+}
+
+.entries li {
+  padding: 6px 0;
+}
+
+.did {
+  font-family: monospace;
+  font-size: 13px;
+  word-break: break-all;
+  color: var(--dark-text);
+}
+
+.highlight {
+  background: color-mix(in srgb, var(--success) 15%, transparent);
+  border-radius: 4px;
+  padding-inline: 6px;
+}

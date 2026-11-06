@@ -32,7 +32,7 @@ const Faq: NextPage = () => {
 
         <p>In addition, credentials must support the following standards and specifications for full verification:</p>
         <ul>
-          <li>The issuer must exist in a supported registry.</li>
+          <li>The issuer must exist in a <a href='/registries'>supported registry</a>.</li>
           <li>The issuer and subject decentralized identifiers must be either did:key or did:web</li>
           <li>The appropriate cryptographic signing method must be used</li>
         </ul>
