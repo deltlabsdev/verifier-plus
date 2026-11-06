@@ -3,6 +3,24 @@ import type { VerifiablePresentation } from '@/types/presentation.d';
 import type { VerifiableCredential, CredentialError } from '@/types/credential.d';
 //import { CredentialErrorTypes } from '@/types/credential.d';
 //import { KnownDidRegistries } from './../data/knownRegistries'
+import { DCC_KNOWN_REGISTRIES_URL, EXTRA_KNOWN_REGISTRIES } from './config';
+
+/**
+ * DCC's shared registry list plus our own. If the DCC list can't be fetched,
+ * fall back to our registries alone rather than failing verification.
+ */
+async function getKnownDIDRegistries(): Promise<object[]> {
+  let dccRegistries: object[] = [];
+  try {
+    const response = await fetch(DCC_KNOWN_REGISTRIES_URL);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const json = await response.json();
+    if (Array.isArray(json)) dccRegistries = json;
+  } catch (err) {
+    console.warn('Could not load DCC known registries:', err);
+  }
+  return [...dccRegistries, ...EXTRA_KNOWN_REGISTRIES];
+}
 
 const NOT_VERIFIED_ERROR = 'Presentation encoded could not be checked for verification and may be malformed.'
 
@@ -59,8 +77,7 @@ export async function verifyCredential(credential: VerifiableCredential): Promis
       };
     */
 
-      const response = await fetch("https://digitalcredentials.github.io/dcc-known-registries/known-did-registries.json");
-      const knownDIDRegistries = await response.json();
+    const knownDIDRegistries = await getKnownDIDRegistries();
 
     const result = await verifierCore.verifyCredential({
       credential,
