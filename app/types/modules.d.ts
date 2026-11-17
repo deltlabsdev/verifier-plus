@@ -11,3 +11,7 @@ declare module '@digitalcredentials/vc-status-list';
 declare module 'jsonld-signatures';
 declare module 'uuid';
 declare module 'credential-handler-polyfill';
+declare module '@digitalcredentials/data-integrity';
+declare module '@digitalcredentials/eddsa-rdfc-2022-cryptosuite';
+declare module '@digitalcredentials/data-integrity';
+declare module '@digitalcredentials/eddsa-rdfc-2022-cryptosuite';
