@@ -390,6 +390,11 @@ export default function Home() {
           <p className={styles.descriptionBlock}>
             DeLT Labs Badges Verifier allows users to verify any supported digital credential. This application is built using the code from <a href='https://digitalcredentials.mit.edu/'>Digital Credentials Consortium</a>                      
           </p>
+
+          <p className={styles.descriptionBlock}>
+            The Verifier marks an issuer as *known* when the credential's `issuer.id` (its DID) is listed in one of the known issuer registries. By default the verifier only uses the registries listed by the Digital Credentials Consortium (DCC). We added our own registry, hosted at https://files.deltlabs.net/registry/registry.json, so that credentials issued by DeLT Labs are recognised.
+          </p>
+
         </div>
 
         {scanError && (

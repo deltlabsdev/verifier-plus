@@ -22,7 +22,7 @@
   --black: #000000;
   --success: #A3E534;
   --background: #1F2937;
-  --primary: #67E8F9;
+  --primary: oklch(0.75 0.11592 263.65);
   --text: #F3F4F6;
   --contrast-text: #111827;
   --dark-text: #E5E7EB;
