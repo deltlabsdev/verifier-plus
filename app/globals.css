@@ -4,7 +4,7 @@
   --success: #4D7C0F;
   --check-success:#80ae44;
   --background: #F3F4F6;
-  --primary: #0F7390;
+  --primary: oklch(0.28774 0.11592 263.65);
   --text: #1F2937;
   --contrast-text: #FFFFFF;
   --dark-text: #384151;

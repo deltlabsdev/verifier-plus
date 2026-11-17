@@ -384,18 +384,11 @@ export default function Home() {
       <div className={styles.contentContainer}>
         <div>
           <h1 className={styles.title}>
-            VerifierPlus
+              DeLT Labs Badges Verifier
           </h1>
           <p className={styles.version}>Version {version}</p>
           <p className={styles.descriptionBlock}>
-            VerifierPlus allows users to verify any <Link href='faq#supported'>supported</Link> digital academic
-            credential.
-            This site is hosted by
-            the <a href='https://deltlabs.net'>DeLT Labs</a>          
-            using the code from <a href='https://digitalcredentials.mit.edu/'>Digital Credentials Consortium</a>
-            , a network of leading international universities designing an open
-            infrastructure for digital academic credentials. <Link href='faq#trust'>Why trust us?</Link>
-
+            DeLT Labs Badges Verifier allows users to verify any supported digital credential. This application is built using the code from <a href='https://digitalcredentials.mit.edu/'>Digital Credentials Consortium</a>                      
           </p>
         </div>
 

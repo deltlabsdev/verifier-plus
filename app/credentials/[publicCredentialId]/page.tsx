@@ -24,10 +24,10 @@ export default async function Page({
   if (credentials.length === 0) {
     return (
       <div className={styles.contentContainer}>
-        <Link href='/'>
+        <Link href='/' style={{ textDecoration: 'none' }}>
           <div>
             <h1 className={styles.title}>
-              VerifierPlus
+              DeLT Labs Badges Verifier
             </h1>
           </div>
         </Link>

@@ -51,6 +51,10 @@
   cursor: pointer;
 }
 
+.logo a {
+  text-decoration: none;
+}
+
 .logo p {
   flex-grow: 1;
   font-size: 16px;
