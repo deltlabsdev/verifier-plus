@@ -12,6 +12,7 @@ import { VerifiableCredential } from '@/types/credential'
 import { useVerification } from '@/lib/useVerification'
 import { credentialsFromQrText } from '@/lib/decode';
 import { extractBadgeFromPng, isPng } from '@/lib/bakedPng';
+import { normalizeBadgeText } from '@/lib/jwt';
 import { TopBar } from '@/components/TopBar/TopBar'
 import { extractCredentialsFrom, VerifiableObject } from '@/lib/verifiableObject'
 import { QRCodeSVG } from 'qrcode.react';
@@ -168,7 +169,8 @@ export default function Home() {
     return true;
   }
 
-  function verifyCredential(json: string) {
+  function verifyCredential(text: string) {
+    const json = normalizeBadgeText(text.trim());
     const result = checkJson(json);
 
     if (!result) { return result; }
@@ -259,7 +261,7 @@ export default function Home() {
   async function verifyTextArea() {
     // check if textarea is json
     let input = "";
-    if (!checkJson(textArea)) {
+    if (!checkJson(normalizeBadgeText(textArea.trim()))) {
       // If it's a URL, redirect to the verify route with query param
       if (textArea.startsWith('http')) {
         history.pushState(null, '', `/#verify?vc=${encodeURIComponent(textArea)}`);

@@ -4,6 +4,7 @@ import type { VerifiableCredential, CredentialError } from '@/types/credential.d
 //import { CredentialErrorTypes } from '@/types/credential.d';
 //import { KnownDidRegistries } from './../data/knownRegistries'
 import { getKnownDIDRegistries } from './knownRegistries';
+import { verifyJwtCredential } from './verifyJwt';
 
 const NOT_VERIFIED_ERROR = 'Presentation encoded could not be checked for verification and may be malformed.'
 
@@ -62,10 +63,15 @@ export async function verifyCredential(credential: VerifiableCredential): Promis
 
     const knownDIDRegistries = await getKnownDIDRegistries();
 
-    const result = await verifierCore.verifyCredential({
-      credential,
-      knownDIDRegistries: knownDIDRegistries
-    });
+    // Credentials from compact-JWT badges carry the signed token in jwt.
+    // Only the token is trusted; the surrounding fields are display data.
+    const jwt = (credential as { jwt?: unknown }).jwt;
+    const result: any = typeof jwt === 'string'
+      ? await verifyJwtCredential(jwt, knownDIDRegistries)
+      : await verifierCore.verifyCredential({
+        credential,
+        knownDIDRegistries: knownDIDRegistries
+      });
     result.verified = Array.isArray(result.log)
       ? result.log.every((check: { valid: any; }) => check.valid)
       : false;
